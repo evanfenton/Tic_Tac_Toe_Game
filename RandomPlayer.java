@@ -9,7 +9,8 @@ public class RandomPlayer extends Player implements Constants{
         random= rg;
     }
     
-    public void play(){
+    @Override
+    protected void play(){
         
         while(!super.board.oWins() && !super.board.xWins() &&
               !super.board.isFull()) {
@@ -22,7 +23,7 @@ public class RandomPlayer extends Player implements Constants{
     }
     
     @Override
-    public void makeMove(){
+    protected void makeMove(){
         boolean selection= true;
         int row=0, column=0;
         while(selection){
