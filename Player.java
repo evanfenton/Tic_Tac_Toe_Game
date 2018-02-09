@@ -1,6 +1,4 @@
 
-import java.util.Scanner;
-
 /*
 * Class Player represents a player
 * of a tic tac toe game by giving it a name
@@ -10,25 +8,25 @@ import java.util.Scanner;
 * opponent player.
 * */
 
-public class Player {
+public abstract class Player {
 
     //name of the player
-    private String name;
+    protected String name;
 
     //board being played on
-    private Board board;
+    protected Board board;
 
     //opponent of the player
-    private Player opponent;
+    protected Player opponent;
 
     //mark the player will use in the game
-    private char mark;
+    protected char mark;
 
     /* Constructs a Player object with a name and mark
      * @param name of new player
      * @param mark of new player
      */
-    public Player(String n, char m){
+    protected Player(String n, char m){
         name=n;
         mark=m;
     }
@@ -39,44 +37,18 @@ public class Player {
     * else, the player makes a move and challenges
     * the opponent to make theirs
     * */
-    public void play(){
-
-        while(!board.oWins() && !board.xWins() && !board.isFull()) {
-
-            makeMove();
-            board.display();
-            opponent.play();
-        }
-
-
-    }
+    protected abstract void play();
 
     /*
     * used to insert the players mark on the board
     * according to users input
     * */
-    public void makeMove(){
-
-        Scanner scan= new Scanner(System.in);
-        int row,column;
-
-        System.out.println(name+ ", what row should your next "+mark+
-            " be placed in?");
-        row=Integer.parseInt(scan.nextLine());
-
-        System.out.println(name+ ", what column should your next "+mark+
-                " be placed in?");
-        column=Integer.parseInt(scan.nextLine());
-
-        board.addMark(row,column,mark);
-        System.out.println();
-    }
-
+    protected abstract void makeMove();
     /*
     * accesses the name of a player
     * @return name
     * */
-    public String getName() {
+    protected String getName() {
         return name;
     }
 
@@ -84,7 +56,7 @@ public class Player {
     * initializes the players opponent player
     * @param opponent player
     * */
-    public void setOpponent(Player opponent) {
+    protected void setOpponent(Player opponent) {
         this.opponent = opponent;
     }
 
@@ -92,7 +64,7 @@ public class Player {
     * initializes the players board
     * @param board
     * */
-    public void setBoard(Board board) {
+    protected void setBoard(Board board) {
         this.board = board;
     }
 }

@@ -77,7 +77,7 @@ public class Board implements Constants {
 	 * @return true if O player won and false if not
 	 * */
 	public boolean oWins() {
-		if (checkWinner(LETTER_X) == 1)
+		if (checkWinner(LETTER_O) == 1)
 			return true;
 		else
 			return false;
