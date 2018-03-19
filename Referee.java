@@ -37,23 +37,34 @@ public class Referee {
         xPlayer.setOpponent(oPlayer);
         oPlayer.setOpponent(xPlayer);
 
-        System.out.println("Referee will now start the game\n");
+        xPlayer.sendMessage("Referee will now start the game\n");
+        oPlayer.sendMessage("Referee will now start the game\n");
 
-        board.display();
 
         xPlayer.play();
 
-        System.out.print("\nTHE GAME IS OVER: ");
+        xPlayer.sendMessage("\nTHE GAME IS OVER: ");
+        oPlayer.sendMessage("\nTHE GAME IS OVER: ");
 
         if(board.oWins()){
-            System.out.println(oPlayer.getName() + " is the winner!");
+            xPlayer.sendMessage(oPlayer.getName() + " is the winner!");
+            oPlayer.sendMessage(oPlayer.getName() + " is the winner!");
         }
-        else if(board.xWins())
-            System.out.println(xPlayer.getName() + " is the winner!");
-        else
-            System.out.println("The game ended in a tie");
+        else if(board.xWins()) {
+            xPlayer.sendMessage(xPlayer.getName() + " is the winner!");
+            oPlayer.sendMessage(xPlayer.getName() + " is the winner!");
+        }
+        else {
+            xPlayer.sendMessage("The game ended in a tie");
+            oPlayer.sendMessage("The game ended in a tie");
+        }
 
         board.clear();
+        xPlayer.sendMessage("QUIT");
+        oPlayer.sendMessage("QUIT");
+
+        xPlayer.close();
+        oPlayer.close();
     }
 
     /*

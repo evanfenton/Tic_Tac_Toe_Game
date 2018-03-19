@@ -1,6 +1,4 @@
 
-
-
 /*
 * Class Board implements the board of a
 * tic tac toe game as well as managing the
@@ -10,6 +8,8 @@
 * the Constants interface since it is responsible
 * for displaying the board and adding players marks.
 * */
+
+import java.io.PrintWriter;
 
 public class Board implements Constants {
 
@@ -77,7 +77,7 @@ public class Board implements Constants {
 	 * @return true if O player won and false if not
 	 * */
 	public boolean oWins() {
-		if (checkWinner(LETTER_X) == 1)
+		if (checkWinner(LETTER_O) == 1)
 			return true;
 		else
 			return false;
@@ -87,17 +87,17 @@ public class Board implements Constants {
 	* prints the board and its current contents to
 	* the console
 	* */
-	public void display() {
-		displayColumnHeaders();
-		addHyphens();
+	public void display(PrintWriter pw) {
+		displayColumnHeaders(pw);
+		addHyphens(pw);
 		for (int row = 0; row < 3; row++) {
-			addSpaces();
-			System.out.print("    row " + row + ' ');
+			addSpaces(pw);
+			pw.print("    row " + row + ' ');
 			for (int col = 0; col < 3; col++)
-				System.out.print("|  " + getMark(row, col) + "  ");
-			System.out.println("|");
-			addSpaces();
-			addHyphens();
+				pw.print("|  " + getMark(row, col) + "  ");
+			pw.println("|");
+			addSpaces(pw);
+			addHyphens(pw);
 		}
 	}
 
@@ -176,32 +176,32 @@ public class Board implements Constants {
 	* used to display the column and its number
 	* to the console
 	* */
-	void displayColumnHeaders() {
-		System.out.print("          ");
+	void displayColumnHeaders(PrintWriter pw) {
+		pw.print("          ");
 		for (int j = 0; j < 3; j++)
-			System.out.print("|col " + j);
-		System.out.println();
+			pw.print("|col " + j);
+		pw.println();
 	}
 
 	/*
 	* used to display the horizontal lines
 	* of the board
 	* */
-	void addHyphens() {
-		System.out.print("          ");
+	void addHyphens(PrintWriter pw) {
+		pw.print("          ");
 		for (int j = 0; j < 3; j++)
-			System.out.print("+-----");
-		System.out.println("+");
+			pw.print("+-----");
+		pw.println("+");
 	}
 
 	/*
 	 * used to display the vertical lines
 	 * of the board
 	 * */
-	void addSpaces() {
-		System.out.print("          ");
+	void addSpaces(PrintWriter pw) {
+		pw.print("          ");
 		for (int j = 0; j < 3; j++)
-			System.out.print("|     ");
-		System.out.println("|");
+			pw.print("|     ");
+		pw.println("|");
 	}
 }

@@ -1,5 +1,9 @@
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 /*
 * Class Player represents a player
@@ -24,13 +28,20 @@ public class Player {
     //mark the player will use in the game
     private char mark;
 
+    //for communication through the client
+    private BufferedReader socketIn;
+    private PrintWriter socketOut;
+
     /* Constructs a Player object with a name and mark
-     * @param name of new player
      * @param mark of new player
+     * @param socket used for communication
      */
-    public Player(String n, char m){
-        name=n;
-        mark=m;
+    public Player(char m, Socket s) throws IOException{
+
+        socketIn= new BufferedReader(new InputStreamReader(s.getInputStream()));
+        socketOut= new PrintWriter(s.getOutputStream(), true);
+        name= nameRead();
+        mark= m;
     }
 
     /*
@@ -39,15 +50,21 @@ public class Player {
     * else, the player makes a move and challenges
     * the opponent to make theirs
     * */
-    public void play(){
+    public void play() {
 
-        while(!board.oWins() && !board.xWins() && !board.isFull()) {
+        try {
 
-            makeMove();
-            board.display();
-            opponent.play();
+            while (!board.oWins() && !board.xWins() && !board.isFull()) {
+
+                board.display(socketOut);
+                makeMove();
+                board.display(socketOut);
+                opponent.play();
+            }
+
+        } catch(IOException e){
+            System.err.println(e.getMessage());
         }
-
 
     }
 
@@ -55,21 +72,25 @@ public class Player {
     * used to insert the players mark on the board
     * according to users input
     * */
-    public void makeMove(){
+    public void makeMove() throws IOException{
 
-        Scanner scan= new Scanner(System.in);
         int row,column;
 
-        System.out.println(name+ ", what row should your next "+mark+
-            " be placed in?");
-        row=Integer.parseInt(scan.nextLine());
+        sendMessage("\nYOUR TURN\n");
 
-        System.out.println(name+ ", what column should your next "+mark+
-                " be placed in?");
-        column=Integer.parseInt(scan.nextLine());
+        sendMessage(name+ ", what row should your next "+mark+
+            " be placed in?\0");
+
+        row= Integer.parseInt(socketIn.readLine());
+
+        sendMessage(name+ ", what column should your next "+mark+
+                " be placed in?\0");
+
+        column= Integer.parseInt(socketIn.readLine());
 
         board.addMark(row,column,mark);
         System.out.println();
+        socketOut.flush();
     }
 
     /*
@@ -95,4 +116,51 @@ public class Player {
     public void setBoard(Board board) {
         this.board = board;
     }
+
+    /*
+    * prompts user to enter their name
+    * */
+    public String nameRead() throws IOException{
+
+        sendMessage("Please enter your name: \0");
+        String name= socketIn.readLine();
+
+        while(name == null){
+            sendMessage("Please try again: \0");
+            name= socketIn.readLine();
+        }
+        return name;
+    }
+
+    /*
+    * closes socket input and output
+    * */
+    public void close(){
+
+        try {
+            socketIn.close();
+            socketOut.close();
+
+        } catch(IOException e){
+            System.err.println(e.getMessage());
+        }
+    }
+
+    /*
+    * used to send a message to Client
+    * @param message
+    * */
+    public void sendMessage(String m){
+        socketOut.println(m);
+        socketOut.flush();
+    }
+
+    /*
+    * used to access the output socket
+    * */
+
+    public PrintWriter getSocketOut() {
+        return socketOut;
+    }
 }
+

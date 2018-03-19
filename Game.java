@@ -1,6 +1,4 @@
 
-import java.io.*;
-
 /*
 * ENSF 409 Lab 2 Exercise 5
 *
@@ -16,7 +14,7 @@ import java.io.*;
 *
 * */
 
-public class Game implements Constants {
+public class Game implements Constants, Runnable {
 
 	/*
 	* Tic Tac Toe board (3x3 spaces)
@@ -36,53 +34,35 @@ public class Game implements Constants {
 	}
 
 	/*
+	* board accessor function
+	* @return game board
+	* */
+	public Board getTheBoard(){ return theBoard; }
+
+	/*
 	* assigns a referee to the game
 	* @param referee to be appointed
 	* */
-    public void appointReferee(Referee r) throws IOException {
+    public void appointReferee(Referee r, Player x, Player o) {
         theRef = r;
-    	theRef.runTheGame();
+
+		theRef.setxPlayer(x);
+		theRef.setoPlayer(o);
+		theRef.setBoard(theBoard);
+
+    	x.setBoard(theBoard);
+    	o.setBoard(theBoard);
     }
 
     /*
-    * used to set up the game at run time
-    * @param command line args
+    * used to start a Game
     * */
-	public static void main(String[] args) throws IOException {
-		Referee theRef;
-		Player xPlayer, oPlayer;
-		BufferedReader stdin;
-		Game theGame = new Game();
-		stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("\nPlease enter the name of the \'X\' player: ");
-		String name= stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
+	@Override
 
-		xPlayer = new Player(name, LETTER_X);
-		xPlayer.setBoard(theGame.theBoard);
-		
-		System.out.print("\nPlease enter the name of the \'O\' player: ");
-		name = stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
-		
-		oPlayer = new Player(name, LETTER_O);
-		oPlayer.setBoard(theGame.theBoard);
-		
-		theRef = new Referee();
-		theRef.setBoard(theGame.theBoard);
-		theRef.setoPlayer(oPlayer);
-		theRef.setxPlayer(xPlayer);
-        
-        theGame.appointReferee(theRef);
+	public void run(){
 
-        System.out.println("Game Ended");
+		theRef.runTheGame();
+
 	}
-	
 
 }
