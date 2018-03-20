@@ -56,9 +56,8 @@ public class Player {
 
             while (!board.oWins() && !board.xWins() && !board.isFull()) {
 
-                board.display(socketOut);
-                makeMove();
-                board.display(socketOut);
+                int bNum= makeMove();
+                opponent.sendMove(bNum, mark);
                 opponent.play();
             }
 
@@ -72,25 +71,33 @@ public class Player {
     * used to insert the players mark on the board
     * according to users input
     * */
-    public void makeMove() throws IOException{
+    public int makeMove() throws IOException{
 
-        int row,column;
+        int buttonNum, row, column;
+        String move;
+        
+        move= socketIn.readLine();
 
-        sendMessage("\nYOUR TURN\n");
-
-        sendMessage(name+ ", what row should your next "+mark+
-            " be placed in?\0");
-
-        row= Integer.parseInt(socketIn.readLine());
-
-        sendMessage(name+ ", what column should your next "+mark+
-                " be placed in?\0");
-
-        column= Integer.parseInt(socketIn.readLine());
+        buttonNum= Integer.parseInt(move);
+        
+        if(buttonNum % 3==0)
+            column= 0;
+        else if((buttonNum-1) % 3 == 0)
+            column= 1;
+        else
+            column= 2;
+        
+        if(buttonNum < 3)
+            row= 0;
+        else if(buttonNum < 6)
+            row= 1;
+        else
+            row= 2;
 
         board.addMark(row,column,mark);
-        System.out.println();
         socketOut.flush();
+        
+        return buttonNum;
     }
 
     /*
@@ -122,11 +129,11 @@ public class Player {
     * */
     public String nameRead() throws IOException{
 
-        sendMessage("Please enter your name: \0");
+        sendMessage("\0");
         String name= socketIn.readLine();
 
         while(name == null){
-            sendMessage("Please try again: \0");
+            sendMessage("\0try again");
             name= socketIn.readLine();
         }
         return name;
@@ -161,6 +168,11 @@ public class Player {
 
     public PrintWriter getSocketOut() {
         return socketOut;
+    }
+    
+    public void sendMove(int bNum, char m){
+        socketOut.println(bNum+" "+m);
+        socketOut.flush();
     }
 }
 
